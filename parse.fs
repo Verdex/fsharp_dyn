@@ -3,13 +3,13 @@
 module Parse
 
 
-type ParseSource<'a> = int * 'a
+type ParseSource<'A> = int * 'A
 
-type ParseResult<'s, 'a>  =
-    | Success of 'a * ParseSource<'s>
-    | Failure
+type ParseResult<'S, 'A> =
+    | Success of 'A * ParseSource<'S>
+    | Failure of ParseSource<'S> 
 
-type Parser<'s, 'a> = ParseSource<'s> -> ParseResult<'s, 'a>
+type Parser<'S, 'A> = ParseSource<'S> -> ParseResult<'S, 'A>
 
 // bind : ma -> (a -> mb) -> mb
 // mu : a -> ma
