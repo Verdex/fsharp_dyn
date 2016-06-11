@@ -3,24 +3,28 @@
 module Parse
 
 
-type ParseSource<'A> = int * 'A
+type ParseSource<'a> = int * 'a
 
-type ParseResult<'S, 'A> =
-    | Success of 'A * ParseSource<'S>
-    | Failure of ParseSource<'S> 
+type ParseResult<'s, 'a> =
+    | Success of 'a * ParseSource<'s>
+    | Failure of ParseSource<'s> 
 
-type Parser<'S, 'A> =  ParseSource<'S> -> ParseResult<'S, 'A>
+type Parser<'s, 'a> =  ParseSource<'s> -> ParseResult<'s, 'a>
 
-// bind : ma -> (a -> mb) -> mb
-// mu : a -> ma
 type ParserBuilder() =
-    member this.Bind (p : Parser<'S, 'A>, g : 'A -> Parser<'S, 'B>) = 
+    member this.Bind (p : Parser<'s, 'a>, g : 'a -> Parser<'s, 'b>) = 
         (fun s -> 
             match p s with 
             | Success( value, source ) -> g value source
-            | Failure source -> Failure source ) : Parser<'S, 'B>
+            | Failure source -> Failure source ) 
             
     member this.Return a = fun source -> Success( a, source )
+
+let map (f : 'a -> 'b)  (p : Parser<'s, 'a>)  = 
+    fun (s : ParseSource<'s>) -> 
+        match p s with
+        | Success ( value, source ) -> Success( f value, source )
+        | Failure source -> Failure source
 
 let parse = new ParserBuilder()
 
@@ -29,7 +33,7 @@ let getChar : Parser<char array, char> = fun s ->
         if array.[index] = 'a' then Success( 'a', (index, array) )
         else Failure( index, array ) 
 
-let z (*: Parser<char array, char * char>*) = 
+let z = 
     parse { let! a = getChar 
             let! b = getChar 
             return (a, b) 
