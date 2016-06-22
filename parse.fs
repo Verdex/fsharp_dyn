@@ -36,6 +36,7 @@ let getChar : Parser<char array, char> = fun s ->
 let z = 
     parse { let! a = getChar 
             let! b = getChar 
-            return (a, b) 
+            let! z = map (fun h -> h) getChar 
+            return (a, b, z) 
           }
 
