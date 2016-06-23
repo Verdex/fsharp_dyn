@@ -26,6 +26,12 @@ let map (f : 'a -> 'b)  (p : Parser<'s, 'a>)  =
         | Success ( value, source ) -> Success( f value, source )
         | Failure source -> Failure source
 
+let (<|>) (p1 : Parser<'s, 'a>) (p2 : Parser<'s, 'a>) = fun s ->
+    match p1 s with
+    | Success ( value, source ) -> Success( value, source )
+    | Failure source -> p2 s
+
+
 let parse = new ParserBuilder()
 
 let getChar : Parser<char array, char> = fun s ->
