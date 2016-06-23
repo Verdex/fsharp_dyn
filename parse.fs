@@ -31,7 +31,6 @@ let (<|>) (p1 : Parser<'s, 'a>) (p2 : Parser<'s, 'a>) = fun s ->
     | Success ( value, source ) -> Success( value, source )
     | Failure source -> p2 s
 
-
 let parse = new ParserBuilder()
 
 let getChar : Parser<char array, char> = fun s ->
@@ -39,10 +38,16 @@ let getChar : Parser<char array, char> = fun s ->
         if array.[index] = 'a' then Success( 'a', (index, array) )
         else Failure( index, array ) 
 
+let getChar2 : Parser<char array, char> = fun s ->
+    let (index, array) = s in
+        if array.[index] = 'a' then Success( 'b', (index, array) )
+        else Failure( index, array ) 
+
 let z = 
     parse { let! a = getChar 
             let! b = getChar 
             let! z = map (fun h -> h) getChar 
-            return (a, b, z) 
+            let! w = getChar2 <|> getChar
+            return (a, b, z, w) 
           }
 
