@@ -1,6 +1,4 @@
 
 
-
-
 clean : 
 	rm *.exe
