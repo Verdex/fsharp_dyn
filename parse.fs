@@ -9,7 +9,7 @@ type ParseResult<'s, 'a> =
     | Success of 'a * ParseSource<'s>
     | Failure of ParseSource<'s> 
 
-type Parser<'s, 'a> =  ParseSource<'s> -> ParseResult<'s, 'a>
+type Parser<'s, 'a> = ParseSource<'s> -> ParseResult<'s, 'a>
 
 type ParserBuilder() =
     member this.Bind (p : Parser<'s, 'a>, g : 'a -> Parser<'s, 'b>) = 
@@ -30,6 +30,7 @@ let (<|>) (p1 : Parser<'s, 'a>) (p2 : Parser<'s, 'a>) = fun s ->
     match p1 s with
     | Success ( value, source ) -> Success( value, source )
     | Failure source -> p2 s
+
 
 let parse = new ParserBuilder()
 
